@@ -9,6 +9,8 @@
 	let errorMessage = $state('');
 	let copyFeedback = $state<'success' | 'failure' | ''>('');
 	let isDemoMode = $state(false);
+	let charCount = $derived(textInput.length);
+	let wordCount = $derived(textInput.trim().split(/\s+/).filter(w => w.length > 0).length);
 
 	// Derived state
 	let hasInput = $derived(textInput.trim() !== '');
@@ -73,6 +75,7 @@
 		textInput = '';
 		summaryOutput = '';
 		errorMessage = '';
+		isDemoMode = false;
 		const textarea = document.getElementById('text-input-area');
 		textarea?.focus();
 	}
@@ -93,139 +96,245 @@
 </script>
 
 <svelte:head>
-	<title>Summarizer</title>
-	<meta name="description" content="Summarize your text effortlessly with the Summarizer." />
+	<title>AI Text Summarizer - Dashboard</title>
+	<meta name="description" content="Professional AI-powered text summarization with Claude AI" />
 </svelte:head>
 
-<div class="flex flex-col items-center min-h-screen bg-app-bg">
+<div class="min-h-screen bg-gradient-to-br from-dark-50 via-primary-50 to-secondary-50">
 	<!-- Demo Mode Banner -->
 	{#if isDemoMode}
-		<div class="w-full bg-yellow-400 text-black px-4 py-2 text-center font-bold text-sm">
-			⚠️ DEMO MODE - Mock summaries only. Add Anthropic credits to use real AI.
-			<a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener noreferrer" class="underline ml-2">Add Credits →</a>
+		<div class="bg-warning-500 text-white px-6 py-3 text-center font-medium shadow-lg animate-slide-in">
+			⚠️ DEMO MODE - Mock summaries only. 
+			<a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener noreferrer" class="underline font-bold hover:text-warning-100 transition-colors ml-2">
+				Add Credits →
+			</a>
 		</div>
 	{/if}
 
-	<header class="relative w-full">
-		<img class="w-full block" src="/images/cool-dog.webp" alt="Cool dog with sunglasses on" />
-		<h1 class="absolute top-[0.5vh] left-[5.5vw] font-bold font-orbitron">
-			<span class="block text-[clamp(0.6rem,5vw,5rem)] leading-[1.6]">The</span>
-			<span class="text-[clamp(1.8rem,8vw,8rem)] leading-[1.2]">Summarizer</span>
-		</h1>
+	<!-- Header -->
+	<header class="bg-white shadow-sm border-b border-dark-100">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+			<div class="flex items-center justify-between">
+				<div class="flex items-center space-x-4">
+					<div class="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
+						<svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+						</svg>
+					</div>
+					<div>
+						<h1 class="text-2xl font-bold text-dark-900 font-display">AI Summarizer</h1>
+						<p class="text-sm text-dark-500">Powered by Claude AI</p>
+					</div>
+				</div>
+				<div class="flex items-center space-x-4">
+					{#if isDemoMode}
+						<span class="px-4 py-2 bg-warning-100 text-warning-800 rounded-lg font-semibold text-sm">
+							Demo Mode
+						</span>
+					{:else}
+						<span class="px-4 py-2 bg-success-100 text-success-800 rounded-lg font-semibold text-sm">
+							Live
+						</span>
+					{/if}
+				</div>
+			</div>
+		</div>
 	</header>
 
-	<main class="grid grid-rows-2 md:grid-cols-2 md:grid-rows-1 w-full h-full p-3.5 gap-3.5">
-		<!-- Input Section -->
-		<section class="flex flex-col w-full">
-			<textarea
-				id="text-input-area"
-				bind:value={textInput}
-				oninput={handleInput}
-				placeholder="Paste text here"
-				aria-label="Paste text here to summarize"
-				class="w-full flex-grow min-h-[8.75em] resize-none border-none rounded-md bg-app-input p-3 mb-3.5 font-sans text-app-text placeholder:text-app-text focus:outline-2 focus:outline-app-focus"
-			></textarea>
+	<!-- Main Content -->
+	<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<!-- Input Card -->
+			<div class="card animate-slide-in">
+				<div class="flex items-center justify-between mb-4">
+					<h2 class="text-xl font-bold text-dark-900">Input Text</h2>
+					<div class="text-sm text-dark-500">
+						<span class="font-medium">{wordCount}</span> words • 
+						<span class="font-medium">{charCount}</span> chars
+					</div>
+				</div>
+				
+				<textarea
+					id="text-input-area"
+					bind:value={textInput}
+					oninput={handleInput}
+					placeholder="Paste your text here to summarize..."
+					class="w-full h-64 p-4 border border-dark-200 rounded-lg focus:ring-4 focus:ring-primary-200 focus:border-primary-500 transition-all resize-none font-sans text-dark-900 placeholder:text-dark-400"
+				></textarea>
 
-			<div class="flex flex-col sm:flex-row justify-between gap-3.5 w-full">
-				<!-- Summary Length Control -->
-				<div class="flex flex-col justify-between flex-grow sm:flex-grow-[0.8] font-bold {hasInput ? '' : 'text-app-disabled'}">
-					<div class="flex items-center gap-2 w-full">
-						<span class="text-app-text">1</span>
+				<!-- Settings -->
+				<div class="mt-6 space-y-4">
+					<div>
+						<div class="flex items-center justify-between mb-2">
+							<label class="text-sm font-semibold text-dark-700">Summary Length</label>
+							<span class="text-sm font-bold text-primary-600">{summaryLength} words</span>
+						</div>
 						<input
 							type="range"
-							id="summary-length-input"
 							bind:value={summaryLength}
 							min="1"
 							max="100"
 							disabled={!hasInput}
-							class="flex-grow appearance-none h-3 rounded-[15px] bg-app-button disabled:cursor-not-allowed enabled:hover:bg-app-hover focus:outline-2 focus:outline-app-focus [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-app-focus [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:disabled:bg-app-disabled [&::-webkit-slider-thumb]:disabled:cursor-not-allowed [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-app-focus [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:disabled:bg-app-disabled [&::-moz-range-thumb]:disabled:cursor-not-allowed"
+							class="w-full h-2 bg-dark-200 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 accent-primary-600"
 						/>
-						<span class="text-app-text">100</span>
+						<div class="flex justify-between text-xs text-dark-500 mt-1">
+							<span>1</span>
+							<span>50</span>
+							<span>100</span>
+						</div>
 					</div>
-					<span id="summary-length-text" class="text-xs">Summary Length: {summaryLength} Words</span>
-				</div>
-
-				<!-- Summarize Button -->
-				<button
-					id="summarize-button"
-					onclick={summarize}
-					disabled={!hasInput}
-					class="font-orbitron font-bold bg-app-button border-none rounded-md px-4 h-10 flex items-center justify-center sm:flex-[0_0_40%] disabled:text-app-disabled disabled:cursor-not-allowed enabled:hover:bg-app-hover enabled:hover:cursor-pointer focus:outline-2 focus:outline-app-focus"
-				>
-					Summarize
-				</button>
-			</div>
-		</section>
-
-		<!-- Output Section -->
-		<section id="summary-output-section" class="relative w-full">
-			<!-- Summary Content -->
-			<div
-				id="summary-content"
-				class="absolute top-0 left-0 w-full h-full flex flex-col z-10"
-				class:hidden={isLoading || hasError}
-			>
-				<textarea
-					id="summary-output-area"
-					bind:value={summaryOutput}
-					placeholder="See summary here"
-					aria-label="Summary of text"
-					disabled
-					class="w-full flex-grow min-h-[8.75em] resize-none border-none rounded-md bg-app-input p-3 mb-3.5 font-sans text-app-text placeholder:text-app-text disabled:text-app-disabled disabled:placeholder:text-app-disabled"
-				></textarea>
-
-				<div class="flex flex-col gap-3.5 w-full">
-					<button
-						id="copy-button"
-						onclick={copy}
-						disabled={!hasSummary}
-						class="w-full font-orbitron font-bold bg-app-button border-none rounded-md px-3 h-10 flex items-center justify-center disabled:text-app-disabled disabled:cursor-not-allowed enabled:hover:bg-app-hover enabled:hover:cursor-pointer focus:outline-2 focus:outline-app-focus {copyFeedback === 'success' ? '!bg-app-copied' : ''} {copyFeedback === 'failure' ? '!bg-app-failed' : ''}"
-					>
-						{copyFeedback === 'success' ? '😄 Copied' : copyFeedback === 'failure' ? '😔 Failed' : 'Copy'}
-					</button>
 
 					<button
-						id="clear-button"
-						onclick={clear}
-						disabled={!hasInput}
-						class="w-full font-orbitron font-bold bg-app-button border-none rounded-md px-3 h-10 flex items-center justify-center disabled:text-app-disabled disabled:cursor-not-allowed enabled:hover:bg-app-hover enabled:hover:cursor-pointer focus:outline-2 focus:outline-app-focus"
+						onclick={summarize}
+						disabled={!hasInput || isLoading}
+						class="btn btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
 					>
-						Clear
+						{#if isLoading}
+							<svg class="animate-spin h-5 w-5 mr-2 inline-block" fill="none" viewBox="0 0 24 24">
+								<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+								<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+							</svg>
+							Summarizing...
+						{:else}
+							<svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+							</svg>
+							Summarize Text
+						{/if}
 					</button>
 				</div>
 			</div>
 
-			<!-- Loading Section -->
-			{#if isLoading}
-				<div
-					id="loading-section"
-					class="absolute top-0 left-0 w-full h-full flex flex-col z-20 justify-center items-center bg-app-bg"
-					aria-live="polite"
-				>
-					<img src="/images/loading-spinner.svg" alt="Loading spinner" class="max-w-[100px] max-h-[100px] w-auto h-auto" />
-					<div id="loading-message" class="mt-4 font-bold">Summarizing...</div>
-				</div>
-			{/if}
-
-			<!-- Error Section -->
-			{#if hasError}
-				<div
-					id="error-section"
-					class="absolute top-0 left-0 w-full h-full flex flex-col z-20 justify-center items-center bg-app-bg"
-					aria-live="assertive"
-				>
-					<div id="error-message" class="w-full break-words mb-4 font-bold text-center px-4">
-						{errorMessage}
+			<!-- Output Card -->
+			<div class="card animate-slide-in relative">
+				{#if hasError}
+					<!-- Error State -->
+					<div class="absolute inset-0 flex flex-col items-center justify-center p-6 bg-white rounded-xl">
+						<div class="w-16 h-16 bg-danger-100 rounded-full flex items-center justify-center mb-4">
+							<svg class="w-8 h-8 text-danger-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+							</svg>
+						</div>
+						<h3 class="text-lg font-bold text-dark-900 mb-2">Error</h3>
+						<p class="text-center text-dark-600 mb-6 max-w-md">{errorMessage}</p>
+						<button onclick={dismissError} class="btn btn-danger">
+							Dismiss & Try Again
+						</button>
 					</div>
-					<button
-						id="dismiss-error-button"
-						onclick={dismissError}
-						class="w-full max-w-md font-orbitron font-bold bg-app-button border-none rounded-md px-3 h-10 flex items-center justify-center hover:bg-app-hover hover:cursor-pointer focus:outline-2 focus:outline-app-focus"
-					>
-						Dismiss Error
-					</button>
+				{:else if isLoading}
+					<!-- Loading State -->
+					<div class="absolute inset-0 flex flex-col items-center justify-center p-6 bg-white rounded-xl">
+						<div class="w-16 h-16 mb-4">
+							<svg class="animate-spin text-primary-600" fill="none" viewBox="0 0 24 24">
+								<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+								<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+							</svg>
+						</div>
+						<h3 class="text-lg font-bold text-dark-900 mb-2">Processing...</h3>
+						<p class="text-center text-dark-600">Analyzing and summarizing your text</p>
+					</div>
+				{:else}
+					<!-- Output State -->
+					<div class="flex items-center justify-between mb-4">
+						<h2 class="text-xl font-bold text-dark-900">Summary</h2>
+						{#if hasSummary}
+							<span class="px-3 py-1 bg-success-100 text-success-700 rounded-full text-xs font-semibold">
+								Ready
+							</span>
+						{/if}
+					</div>
+
+					<textarea
+						id="summary-output-area"
+						bind:value={summaryOutput}
+						placeholder="Your summary will appear here..."
+						readonly
+						class="w-full h-64 p-4 border border-dark-200 rounded-lg bg-dark-50 font-sans text-dark-900 placeholder:text-dark-400 resize-none"
+					></textarea>
+
+					<!-- Actions -->
+					<div class="mt-6 flex gap-3">
+						<button
+							onclick={copy}
+							disabled={!hasSummary}
+							class="btn btn-success flex-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+						>
+							{#if copyFeedback === 'success'}
+								<svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+								</svg>
+								Copied!
+							{:else if copyFeedback === 'failure'}
+								<svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+								</svg>
+								Failed
+							{:else}
+								<svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+								</svg>
+								Copy to Clipboard
+							{/if}
+						</button>
+
+						<button
+							onclick={clear}
+							disabled={!hasInput && !hasSummary}
+							class="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+						>
+							<svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+							</svg>
+							Clear
+						</button>
+					</div>
+				{/if}
+			</div>
+		</div>
+
+		<!-- Info Cards -->
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+			<div class="card animate-fade-in">
+				<div class="flex items-center space-x-3">
+					<div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+						<svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+						</svg>
+					</div>
+					<div>
+						<p class="text-sm text-dark-500">AI Model</p>
+						<p class="text-lg font-bold text-dark-900">Claude 3.5</p>
+					</div>
 				</div>
-			{/if}
-		</section>
+			</div>
+
+			<div class="card animate-fade-in">
+				<div class="flex items-center space-x-3">
+					<div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+						<svg class="w-6 h-6 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+						</svg>
+					</div>
+					<div>
+						<p class="text-sm text-dark-500">Processing</p>
+						<p class="text-lg font-bold text-dark-900">~2-3 sec</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="card animate-fade-in">
+				<div class="flex items-center space-x-3">
+					<div class="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center">
+						<svg class="w-6 h-6 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+						</svg>
+					</div>
+					<div>
+						<p class="text-sm text-dark-500">Security</p>
+						<p class="text-lg font-bold text-dark-900">Encrypted</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	</main>
 </div>

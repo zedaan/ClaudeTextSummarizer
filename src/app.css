@@ -1,5 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400..900&display=swap') layer(fonts);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" layer(tailwind);
+
+@layer components {
+  .card {
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s;
+    padding: 1.5rem;
+  }
+
+  .card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    transform: scale(1);
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: scale(1.05);
+  }
+
+  .btn:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #2563EB 0%, #9333EA 100%);
+    color: white;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1D4ED8 0%, #7E22CE 100%);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+  }
+
+  .btn-success:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  }
+
+  .btn-danger {
+    background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+    color: white;
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: linear-gradient(135deg, #D97706 0%, #DC2626 100%);
+  }
+
+  .btn-secondary {
+    background-color: #F3F4F6;
+    color: #374151;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: #E5E7EB;
+  }
+}
