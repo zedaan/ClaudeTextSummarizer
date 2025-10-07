@@ -1,11 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import Anthropic from '@anthropic-ai/sdk';
-import { ANTHROPIC_API_KEY } from '$env/static/private';
-
-const anthropic = new Anthropic({
-	apiKey: ANTHROPIC_API_KEY
-});
+import { env } from '$env/dynamic/private';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -22,6 +18,11 @@ export const POST: RequestHandler = async ({ request }) => {
 				{ status: 400 }
 			);
 		}
+
+		// Initialize Anthropic client with runtime env variable
+		const anthropic = new Anthropic({
+			apiKey: env.ANTHROPIC_API_KEY
+		});
 
 		// Call Anthropic API
 		const message = await anthropic.messages.create({
