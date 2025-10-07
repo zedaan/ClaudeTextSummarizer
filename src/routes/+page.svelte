@@ -8,6 +8,7 @@
 	let isLoading = $state(false);
 	let errorMessage = $state('');
 	let copyFeedback = $state<'success' | 'failure' | ''>('');
+	let isDemoMode = $state(false);
 
 	// Derived state
 	let hasInput = $derived(textInput.trim() !== '');
@@ -45,6 +46,7 @@
 
 			const data = await response.json();
 			summaryOutput = data.summary;
+			isDemoMode = data.demoMode || false;
 		} catch (err) {
 			errorMessage = `There was an error processing the text: ${err instanceof Error ? err.message : 'Unknown error'}`;
 		} finally {
@@ -96,6 +98,14 @@
 </svelte:head>
 
 <div class="flex flex-col items-center min-h-screen bg-app-bg">
+	<!-- Demo Mode Banner -->
+	{#if isDemoMode}
+		<div class="w-full bg-yellow-400 text-black px-4 py-2 text-center font-bold text-sm">
+			⚠️ DEMO MODE - Mock summaries only. Add Anthropic credits to use real AI.
+			<a href="https://console.anthropic.com/settings/billing" target="_blank" rel="noopener noreferrer" class="underline ml-2">Add Credits →</a>
+		</div>
+	{/if}
+
 	<header class="relative w-full">
 		<img class="w-full block" src="/images/cool-dog.webp" alt="Cool dog with sunglasses on" />
 		<h1 class="absolute top-[0.5vh] left-[5.5vw] font-bold font-orbitron">

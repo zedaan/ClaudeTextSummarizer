@@ -3,6 +3,22 @@ import type { RequestHandler } from './$types';
 import Anthropic from '@anthropic-ai/sdk';
 import { env } from '$env/dynamic/private';
 
+// Generate a mock summary for demo mode
+function generateMockSummary(text: string, maxWords: number): string {
+	const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+	const wordCount = text.split(/\s+/).length;
+
+	// Create a realistic-looking summary
+	const summaryParts = [
+		sentences[0]?.trim() || 'The text discusses various topics.',
+		sentences.length > 2 ? `Key points include ${sentences[1]?.substring(0, 50)}...` : '',
+		`This covers approximately ${wordCount} words of content.`
+	].filter(Boolean);
+
+	let summary = summaryParts.join(' ').substring(0, maxWords * 7); // Rough word length
+	return summary + ' [DEMO MODE - Add Anthropic credits for real AI summaries]';
+}
+
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const { text, maxWords } = await request.json();
@@ -17,6 +33,16 @@ export const POST: RequestHandler = async ({ request }) => {
 				{ error: 'Invalid input: maxWords must be between 1 and 100' },
 				{ status: 400 }
 			);
+		}
+
+		// Check for demo mode
+		if (env.DEMO_MODE === 'true') {
+			console.log('⚠️  Running in DEMO MODE - using mock summaries');
+			await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+			return json({
+				summary: generateMockSummary(text, maxWords),
+				demoMode: true
+			});
 		}
 
 		// Initialize Anthropic client with runtime env variable
