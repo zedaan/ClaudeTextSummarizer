@@ -64,11 +64,22 @@
   }
 
   .btn-secondary {
-    background-color: #F3F4F6;
-    color: #374151;
+    background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+    color: white;
   }
 
   .btn-secondary:hover:not(:disabled) {
-    background-color: #E5E7EB;
+    background: linear-gradient(135deg, #D97706 0%, #EA580C 100%);
+  }
+
+  .btn-outline {
+    background-color: white;
+    color: #374151;
+    border: 2px solid #E5E7EB;
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    background-color: #F9FAFB;
+    border-color: #D1D5DB;
   }
 }

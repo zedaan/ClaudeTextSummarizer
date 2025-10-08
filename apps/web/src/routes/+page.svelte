@@ -3,6 +3,7 @@
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import Logo from '$lib/components/Logo.svelte';
+	import ImageDescriber from '$lib/components/ImageDescriber.svelte';
 	import { summaryStore } from '$lib/stores/summaryStore';
 
 	// State
@@ -53,7 +54,8 @@
 		summaryOutput = '';
 
 		try {
-			const response = await fetch('/api/summarize', {
+			const apiUrl = import.meta.env.PUBLIC_TEXT_API_URL || 'http://localhost:3001';
+			const response = await fetch(`${apiUrl}/summarize`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -428,6 +430,12 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Divider -->
+			<div class="my-12 border-t border-dark-200"></div>
+
+			<!-- Image Describer Section -->
+			<ImageDescriber />
 		</main>
 
 		<!-- Footer -->
