@@ -30,6 +30,10 @@ vite.config.ts.timestamp-*
 package-lock.json
 yarn.lock
 
+# Documentation (keep only README.md)
+*.md
+!README.md
+
 # Logs
 *.log
 npm-debug.log*
