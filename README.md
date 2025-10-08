@@ -81,36 +81,37 @@ textSummarizer/
 
 ### Prerequisites
 
-Ensure you have the following installed:
-
 - **Node.js** `18.x` or higher ([Download](https://nodejs.org/))
 - **pnpm** `9.14+` ([Install](https://pnpm.io/installation))
-- **Anthropic API Key** ([Get one](https://console.anthropic.com/))
+- **Anthropic API Key** ([Get yours free](https://console.anthropic.com/))
 
 ### Installation
 
-Get up and running in under 2 minutes:
+Get started in 3 simple steps:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/zedaan/ClaudeTextSummarizer.git
-cd ClaudeTextSummarizer
+git clone https://github.com/yourusername/your-repo-name.git
+cd your-repo-name
 
-# 2. Install all dependencies
+# 2. Install dependencies
 pnpm install
 
-# 3. Configure environment variables
+# 3. Set up environment variables
 cp .env.example .env
+cp apps/web/.env.example apps/web/.env
 
-# 4. Edit .env and add your Anthropic API key
+# 4. Add your Anthropic API key to .env
+# Open .env in a text editor and replace 'your_api_key_here' with your actual key:
 # ANTHROPIC_API_KEY=your_api_key_here
-# DEMO_MODE=true  # Set to false when you have API credits
+#
+# To test without an API key, set DEMO_MODE=true
 
 # 5. Start all services
 pnpm dev
 ```
 
-That's it! 🎉 Open your browser to:
+That's it! Open your browser to:
 - **Frontend**: http://localhost:3000
 - **Text API**: http://localhost:3001
 - **Image API**: http://localhost:3002
@@ -272,6 +273,21 @@ The monorepo architecture makes it easy to extend:
 
 ---
 
+## 🔑 Getting Your API Key
+
+This application requires an Anthropic API key to use the Claude AI features:
+
+1. Visit [Anthropic Console](https://console.anthropic.com/)
+2. Sign up or log in to your account
+3. Navigate to **API Keys** section
+4. Click **Create Key** to generate a new API key
+5. Copy the key (starts with `sk-ant-api03-...`)
+6. Add it to your `.env` file
+
+**Note**: New accounts receive free credits to get started. You can test the app without credits using `DEMO_MODE=true`.
+
+---
+
 ## 🔐 Environment Variables
 
 | Variable | Description | Required | Default |
@@ -379,10 +395,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 📞 Support & Contact
 
-- 🐛 **Issues**: [GitHub Issues](https://github.com/zedaan/ClaudeTextSummarizer/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/zedaan/ClaudeTextSummarizer/discussions)
-- 📧 **Email**: support@yourproject.com
-- 🌐 **Website**: https://yourproject.com
+- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/your-repo-name/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/your-repo-name/discussions)
 
 ---
 
@@ -407,6 +421,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ⭐ Star us on GitHub — it helps!
 
-[Report Bug](https://github.com/zedaan/ClaudeTextSummarizer/issues) · [Request Feature](https://github.com/zedaan/ClaudeTextSummarizer/issues) · [Documentation](./CODEBASE_GUIDE.md)
+[Report Bug](https://github.com/yourusername/your-repo-name/issues) · [Request Feature](https://github.com/yourusername/your-repo-name/issues) · [Documentation](./CODEBASE_GUIDE.md)
 
 </div>

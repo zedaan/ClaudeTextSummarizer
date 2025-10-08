@@ -1,50 +1,53 @@
 # Quick Start Guide
 
-## 🚀 Run the Application Locally
+## 🚀 Setup Instructions
 
-### Option 1: Development Mode (Recommended for testing)
-
-```bash
-# 1. Install dependencies (if not already done)
-npm install
-
-# 2. Run the development server
-npm run dev
-
-# 3. Open http://localhost:5173 in your browser
-```
-
-### Option 2: Production Build
+### 1. Install Dependencies
 
 ```bash
-# 1. Build the application
-npm run build
-
-# 2. Preview the production build
-npm run preview
-
-# 3. Open http://localhost:4173 in your browser
+# Install all project dependencies using pnpm
+pnpm install
 ```
 
-### Option 3: Docker (Production-ready)
+### 2. Configure Environment Variables
 
 ```bash
-# 1. Build and run with Docker Compose
-docker-compose up -d
-
-# 2. Open http://localhost:3000 in your browser
-
-# To stop:
-docker-compose down
+# Copy the example environment files
+cp .env.example .env
+cp apps/web/.env.example apps/web/.env
 ```
 
-## ⚙️ Configuration
+### 3. Add Your API Key
 
-Your `.env` file should contain:
+Open the `.env` file in the root directory and add your Anthropic API key:
 
+```bash
+# .env file
+ANTHROPIC_API_KEY=your_api_key_here  # Replace with your actual key
+DEMO_MODE=false  # Set to true to test without API key
+TEXT_API_PORT=3001
+IMAGE_API_PORT=3002
+WEB_PORT=3000
 ```
-ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
+
+**Don't have an API key?**
+1. Visit [Anthropic Console](https://console.anthropic.com/)
+2. Sign up for a free account
+3. Navigate to API Keys and create a new key
+4. Copy and paste it into your `.env` file
+
+### 4. Start the Application
+
+```bash
+# Start all microservices (web, text-api, image-api)
+pnpm dev
 ```
+
+### 5. Open in Browser
+
+- **Frontend**: http://localhost:3000
+- **Text API**: http://localhost:3001
+- **Image API**: http://localhost:3002
 
 ## 🧪 Testing the Summarizer
 
@@ -62,48 +65,42 @@ Paste this sample text to test:
 The Industrial Revolution, which took place from the 18th to 19th centuries, was a period during which predominantly agrarian, rural societies in Europe and America became industrial and urban. Before the Industrial Revolution, which began in Britain in the late 1700s, manufacturing was often done in people's homes, using hand tools or basic machines. Industrialization marked a shift to powered, special-purpose machinery, factories and mass production. The iron and textile industries, along with the development of the steam engine, played central roles in the Industrial Revolution, which also saw improved systems of transportation, communication and banking.
 ```
 
-## 🐳 Docker Commands
-
-```bash
-# Build the image manually
-docker build -t claude-summarizer .
-
-# Run the container manually
-docker run -d -p 3000:3000 -e ANTHROPIC_API_KEY=your-key-here claude-summarizer
-
-# View logs
-docker logs -f <container-id>
-
-# Stop the container
-docker stop <container-id>
-```
-
 ## 🔍 Troubleshooting
 
 **API Key Not Working?**
-- Check that your `.env` file exists in the root directory
-- Verify the key starts with `sk-ant-api03-`
-- Restart the dev server after adding the key
+- Verify your `.env` file exists in the root directory
+- Check that the key starts with `sk-ant-api03-`
+- Restart all services: Stop `pnpm dev` and run it again
+- Try DEMO_MODE=true to test without an API key
 
 **Port Already in Use?**
-- Development: Kill the process on port 5173
-- Production: Kill the process on port 3000
-- Docker: Change the port in `docker-compose.yml`
-
-**Build Errors?**
 ```bash
-# Clean and reinstall
-rm -rf node_modules package-lock.json
-npm install
-npm run build
+# Check what's using the ports
+lsof -i :3000  # Frontend
+lsof -i :3001  # Text API
+lsof -i :3002  # Image API
+
+# Kill the process and restart
+kill -9 <PID>
+pnpm dev
+```
+
+**Installation Issues?**
+```bash
+# Clean install
+rm -rf node_modules
+rm -rf apps/*/node_modules
+rm -rf services/*/node_modules
+rm pnpm-lock.yaml
+pnpm install
 ```
 
 ## 📚 Next Steps
 
-- Push to GitHub: `git push origin main`
-- Deploy to production (see README.md)
-- Monitor API usage in Anthropic Console
-- Check `projectplan.md` for remaining tasks
+- Read the full [README.md](./README.md) for detailed documentation
+- Check [CODEBASE_GUIDE.md](./CODEBASE_GUIDE.md) to understand the architecture
+- Monitor your API usage in [Anthropic Console](https://console.anthropic.com/)
+- Explore the demo mode features
 
 ---
 
